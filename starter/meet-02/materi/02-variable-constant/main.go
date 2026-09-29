@@ -1,17 +1,17 @@
 package main
 
 import "fmt"
-
+import "strconv"
 func main() {
 	// var nama string = "Siti"
-	nama := "Siti"
 	// var umur int = 21
+	const namaKelas = "Go Programming"
+	nama := "Siti"
 	umur := 21
 	tinggi := 165.5
 	aktif := true
 
-	const namaKelas = "Go Programming"
-
+	umur,_ = strconv.Atoi("44")	
 	fmt.Println("Kelas:", namaKelas)
 	fmt.Println("Nama:", nama)
 	fmt.Println("Umur:", umur)

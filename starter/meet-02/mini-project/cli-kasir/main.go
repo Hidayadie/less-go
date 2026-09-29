@@ -87,6 +87,10 @@ func inputItem(scanner *bufio.Scanner, nomor int) (Item, error) {
 		return Item{}, err
 	}
 
+	var dummy string
+	fmt.Println("ketuk enter untuk melanjutkan")
+	fmt.Scanln(&dummy)
+
 	return Item{
 		Nama:     nama,
 		Harga:    harga,
@@ -125,6 +129,8 @@ func cetakStruk(items []Item) {
 }
 
 func tampilkanMenu() {
+	fmt.Println("\x1b[2J")
+	fmt.Println("\x1b[H")
 	fmt.Println("\n=== CLI Kasir Sederhana ===")
 	fmt.Println("1. Tambah barang")
 	fmt.Println("2. Lihat keranjang")

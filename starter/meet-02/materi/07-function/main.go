@@ -10,8 +10,8 @@ func tambah(a int, b int) int {
 	return a + b
 }
 
-func hitungDiskon(total int, persen int) int {
-	return total * persen / 100
+func hitungDiskon(total int, persen int) (diskon, hasil int) {
+	return persen, total * persen / 100
 }
 
 func main() {
@@ -20,6 +20,6 @@ func main() {
 	hasil := tambah(10, 5)
 	fmt.Println("10 + 5 =", hasil)
 
-	diskon := hitungDiskon(100000, 10)
-	fmt.Println("Diskon:", diskon)
+	diskon, hasil := hitungDiskon(100000, 10)
+	fmt.Println("Diskon:", diskon, "Hasil:", hasil)
 }
