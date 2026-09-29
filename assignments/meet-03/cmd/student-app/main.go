@@ -32,11 +32,19 @@ func main() {
 			student := ui.AddStudentMenu(scanner, nextID)
 			if (student.Name != "") {
 				students = append(students,student)
-			} // malasss
+				nextID++
+			} 
 			
 		case 2:
-			students = addStudent(scanner, students, nextID)
-			nextID++
+			update := ui.UpdateStudentMenuSelection(scanner)
+			switch update {
+			case 1:
+
+			case 2:
+				
+			}
+
+
 		case 3:
 			id := input.ReadInt(scanner, "ID student: ")
 			score := input.ReadInt(scanner, "Nilai baru: ")

@@ -185,6 +185,8 @@ func PrintStudents(students []student.Student) {
 	i++
 
 	for _, current := range students {
+
+		if !current.Active {fmt.Print(RED)}
 		fmt.Printf("\x1b[%d;%dH", i, width_start)
 		fmt.Printf("%-4d", current.ID)	
 		fmt.Printf("%-17s",current.Name)	
@@ -192,6 +194,7 @@ func PrintStudents(students []student.Student) {
 		fmt.Printf("%-9d", current.Score)
  		if current.Active {fmt.Printf("%-9s", "Aktif")
 		} else {fmt.Printf("%-9s", "non-Aktif")}
+		fmt.Print(RESET)
 		i++
 	}
 	
@@ -202,7 +205,7 @@ func AddStudentMenu(scanner *bufio.Scanner, id int) student.Student{
 	PrintMenu()
 
 	width_start := 2
-	i := 2
+	i := 3
 
 	//var student Student
 
@@ -228,4 +231,52 @@ func AddStudentMenu(scanner *bufio.Scanner, id int) student.Student{
 		Active: true,
 	}
 
+}
+
+func UpdateStudentMenuSelection(scanner *bufio.Scanner) int {
+	for {
+	PrintTable()
+	PrintMenu()
+
+	width_start := 2
+	i := 3
+	var dummy string
+	//var student Student
+
+	fmt.Printf("\x1b[%d;%dH", i, width_start)
+	fmt.Printf("Pilih mode edit...")
+	i++
+
+	fmt.Printf("\x1b[%d;%dH", i, width_start)
+	fmt.Print("1. Edit data siswa")
+	i++
+
+	fmt.Printf("\x1b[%d;%dH", i, width_start)
+	fmt.Print("2. hapus siswa non-aktif")
+	i++
+	
+	fmt.Printf("\x1b[%d;%dH", i, width_start)
+	fmt.Print("0. Kembali")
+	i++
+
+	fmt.Printf("\x1b[%d;%dH", i, width_start)
+	fmt.Print("-> ")
+	i++
+
+	input_angka:= input.ReadInt(scanner, "")
+	if input_angka > 2 || input_angka < 0 {
+		fmt.Printf("\x1b[%d;%dH", i, width_start)
+		fmt.Print("Pastikan nilai benar...")
+		fmt.Scanln(&dummy)
+		continue
+	} else {return input_angka}
+
+
+	}
+
+
+}
+
+func UpdateStudentMenu(){
+	  
 }
