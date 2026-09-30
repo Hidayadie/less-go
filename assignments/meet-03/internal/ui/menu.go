@@ -191,7 +191,7 @@ func PrintStudents(students []student.Student) {
 		fmt.Printf("%-4d", current.ID)	
 		fmt.Printf("%-17s",current.Name)	
 		fmt.Printf("%-9s", current.Major)	
-		fmt.Printf("%-9d", current.Score)
+		fmt.Printf("%-9d", currewnt.Score)
  		if current.Active {fmt.Printf("%-9s", "Aktif")
 		} else {fmt.Printf("%-9s", "non-Aktif")}
 		fmt.Print(RESET)
