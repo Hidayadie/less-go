@@ -41,7 +41,15 @@ func (r Repository) query(ctx context.Context, query string, args ...any) (json.
 }
 
 func (r Repository) List(ctx context.Context) (json.RawMessage, error) {
-	return r.query(ctx, "SELECT * FROM products ORDER BY product_id")
+	return r.query(ctx, `
+		SELECT 
+			p.*, 
+			c.category_name
+		FROM 
+			products p
+		JOIN categories c ON p.category_id = c.category_id
+		ORDER BY p.product_id
+		`)
 }
 func (r Repository) Get(ctx context.Context, id int) (json.RawMessage, error) {
 	return r.query(ctx, "SELECT * FROM products WHERE product_id = $1", id)
