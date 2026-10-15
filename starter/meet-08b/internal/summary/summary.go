@@ -9,5 +9,3 @@ var (
 	ErrConflict     = errors.New("data dengan ID tersebut sudah ada")
 	ErrConstraint   = errors.New("data melanggar batasan database")
 )
-
-
