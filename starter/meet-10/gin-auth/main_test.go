@@ -27,6 +27,8 @@ func TestPublicRoutes(t *testing.T) {
 		{"GET", "/health", "", "health", http.StatusOK},
 		{"GET", "/api/public/info", "", "public.info", http.StatusOK},
 		{"GET", "/api/private/profile", "", "", http.StatusUnauthorized},
+		{"GET", "/api/private/products", "", "", http.StatusUnauthorized},
+		{"POST", "/api/private/products", `{}`, "", http.StatusUnauthorized},
 		{"POST", "/api/auth/register", `{}`, "auth.register", http.StatusBadRequest},
 		{"POST", "/api/auth/login", `{}`, "auth.login", http.StatusBadRequest},
 		{"GET", "/api/me", "", "auth.me", http.StatusUnauthorized},

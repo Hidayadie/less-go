@@ -12,6 +12,7 @@ import (
 	"gin-auth/internal/database"
 	"gin-auth/internal/middleware"
 	"gin-auth/internal/private"
+	"gin-auth/internal/product"
 	"gin-auth/internal/public"
 
 	"github.com/gin-gonic/gin"
@@ -33,7 +34,7 @@ func setupEngine(db *gorm.DB, secret []byte) *gin.Engine {
 	handler := auth.NewHandler(service)
 	auth.RegisterRoutes(r, handler)
 	public.RegisterRoutes(r)
-	private.RegisterRoutes(r, handler.RequireAuth())
+	private.RegisterRoutes(r, handler.RequireAuth(), db)
 	return r
 }
 
@@ -54,8 +55,8 @@ func run() error {
 		return err
 	}
 	defer conn.Close()
-	if err := db.AutoMigrate(&auth.User{}); err != nil {
-		return fmt.Errorf("migrasi tabel users gagal: %w", err)
+	if err := db.AutoMigrate(&auth.User{}, &product.Product{}); err != nil {
+		return fmt.Errorf("migrasi tabel users/products gagal: %w", err)
 	}
 	port := os.Getenv("PORT")
 	if port == "" {
