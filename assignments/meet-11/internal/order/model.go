@@ -1,0 +1,39 @@
+package order
+
+import (
+	"time"
+
+	"gin-auth/internal/auth"
+	"gin-auth/internal/product"
+
+	//"gorm.io/gorm"
+)
+
+type Order struct {
+	ID        uint           `json:"id" gorm:"primaryKey"`
+	UserID    uint           `json:"user_id" gorm:"not null;index"`
+	Date      time.Time      `json:"date" gorm:"not null"`
+	Total     float64        `json:"total" gorm:"not null;default:0"`
+	CreatedAt time.Time      `json:"created_at"`
+	//UpdatedAt time.Time      `json:"updated_at"`
+	//DeletedAt gorm.DeletedAt `json:"-" gorm:"index"`
+
+	// Relasi ke user yang membuat order.
+	User auth.User `json:"user" gorm:"foreignKey:UserID"`
+
+	// Detail barang yang termasuk dalam order.
+	//Details []OrderDetail `json:"details" gorm:"foreignKey:OrderID"`
+}
+
+type OrderDetail struct {
+	ID        uint      `json:"id" gorm:"primaryKey"`
+	OrderID   uint      `json:"order_id" gorm:"not null;index"`
+	ProductID uint      `json:"product_id" gorm:"not null;index"`
+	Qty       int       `json:"qty" gorm:"not null;check:qty > 0"`
+	Price     float64   `json:"price" gorm:"not null;check:price >= 0"`
+	CreatedAt time.Time `json:"created_at"`
+
+	// Relasi ke order dan product.
+	Order   Order         `json:"-" gorm:"foreignKey:OrderID"`
+	Product product.Product `json:"product" gorm:"foreignKey:ProductID"`
+}
