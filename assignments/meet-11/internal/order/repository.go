@@ -20,7 +20,7 @@ func (r *Repository) Create(ctx context.Context, items []OrderItem, userID uint)
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		var grandTotal int
 
-		// Kumpulkan details dulu, hitung total
+		
 		details := make([]OrderDetail, 0, len(items))
 		for _, item := range items {
 				var p product.Product
@@ -50,13 +50,22 @@ func (r *Repository) Create(ctx context.Context, items []OrderItem, userID uint)
 				}
 		}
 
-		// Buat order header
-		order = Order{UserID: userID, Total: grandTotal}
+		substot, err := taxSubtotal(grandTotal)
+		if err != nil {
+ 			return err
+		}
+		
+		order = Order{
+			UserID: userID, 
+			Total: grandTotal,
+			SubTotal: substot,
+		}
 		if err := tx.Create(&order).Error; err != nil {
 				return err
 		}
+		
 
-		// Isi OrderID ke semua details, lalu batch insert
+		// isi OrderID 
 		for i := range details {
 				details[i].OrderID = order.ID
 		}
@@ -70,7 +79,7 @@ func (r *Repository) Create(ctx context.Context, items []OrderItem, userID uint)
 			return Order{}, err
 	}
 
-	// Preload di luar transaksi (seperti yang dibahas sebelumnya)
+	// preload 
 	if err := r.db.WithContext(ctx).
 			Preload("User").
 			Preload("Details.Product").
@@ -80,48 +89,7 @@ func (r *Repository) Create(ctx context.Context, items []OrderItem, userID uint)
 
 	return order, nil
 }
-/*
-func (r *Repository) Create(ctx context.Context, productID uint, quantity int, userID uint) (Order, error) {
-	var order Order
-	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		var item product.Product
-		// SELECT FOR UPDATE mengunci baris product sampai transaksi commit atau rollback.
-		// Order bersamaan pada product yang sama harus menunggu, lalu membaca stok terbaru
-		// agar stok yang sama tidak terjual dua kali.
-		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&item, productID).Error; err != nil {
-			return err
-		}
 
-		if item.Stock < quantity {
-			return ErrInsufficientStock
-		}
-
-		total, err := orderTotal(item.Price, quantity)
-		if err != nil {
-			return err
-		}
-		order = Order{UserID: userID, Total: total}
-		if err := tx.Create(&order).Error; err != nil {
-			return err
-		}
-
-		detail := OrderDetail{OrderID: order.ID, ProductID: item.ID, Qty: quantity, Price: item.Price}
-		if err := tx.Create(&detail).Error; err != nil {
-			return err
-		}
-
-		if err := tx.Model(&item).Update("stock", gorm.Expr("stock - ?", quantity)).Error; err != nil {
-			return err
-		}
-
-		return tx.Preload("User").Preload("Details.Product").First(&order, order.ID).Error
-	})
-	if err != nil {
-		return Order{}, err
-	}
-	return order, nil
-}
-*/
 func (r *Repository) List(ctx context.Context, userID uint) ([]Order, error) {
 	orders := []Order{}
 	err := r.db.WithContext(ctx).Where("user_id = ?", userID).Preload("User").Preload("Details.Product").Order("id DESC").Find(&orders).Error
@@ -139,61 +107,3 @@ func (r *Repository) GetByID(ctx context.Context, id, userID uint) (*Order, erro
 	}
 	return &order, nil
 }
-/*
-package order
-
-import (
-	"context"
-
-	"gorm.io/gorm"
-)
-
-
-type Repository struct {
-	db *gorm.DB
-}
-
-func NewRepository(db *gorm.DB) *Repository {
-	return &Repository{db: db}
-}
-
-func (r *Repository) GetOrderByID(ctx context.Context, id uint) (Order, error) {
-	var order Order
-	err := r.db.WithContext(ctx).First(&order, id).Error
-	return order, err
-}
-
-func (r *Repository) CreateOrder(ctx context.Context, order *Order) error {
-	return r.db.WithContext(ctx).Create(order).Error
-}
-
-func (r *Repository) CreateOrderDetail(ctx context.Context, orderDetail *OrderDetail) error {
-	return r.db.WithContext(ctx).Create(orderDetail).Error
-}
-
-func (r *Repository) GetOrderList(ctx context.Context, userID uint) ([]Order, error) {
-	orders := []Order{}
-
-	err := r.db.
-		WithContext(ctx).
-		Preload("user").
-		Where("user_id = ?", userID).
-		Order("id ASC").
-		Limit(100).
-		Find(&orders).Error
-	return orders, err
-}
-
-func (r *Repository) GetOrderByIDWithUser(ctx context.Context, id uint, userID uint) (Order, error) {
-	var order Order
-	err := r.db.WithContext(ctx).Preload("user").Where("id = ? AND user_id = ?", id, userID).First(&order).Error
-	return order, err
-}
-
-func (r *Repository) GetOrderDetailList(ctx context.Context) ([]OrderDetail, error) {
-	order_details := []OrderDetail{}
-
-	err := r.db.WithContext(ctx).Order("id ASC").Limit(100).Find(&order_details).Error
-	return order_details, err
-}
-*/

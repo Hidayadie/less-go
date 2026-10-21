@@ -14,6 +14,7 @@ type Order struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	Total   int           `json:"total" gorm:"not null;default:0"`
+	SubTotal int 		`json:"sub_total"`
 	Details []OrderDetail `json:"order_details" gorm:"foreignKey:OrderID"`
 }
 
@@ -25,6 +26,7 @@ type OrderDetail struct {
 	Product   product.Product `json:"product" gorm:"constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
 	Qty       int             `json:"qty" gorm:"not null;default:0"`
 	Price     int             `json:"price" gorm:"not null;default:0"`
+
 }
 /*
 package order
