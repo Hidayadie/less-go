@@ -22,6 +22,7 @@ func (h *Handler) Create(c *gin.Context) {
 		Name string `json:"name" binding:"required,max=100"`
 		Stock int		`json:"stock" binding:"required,gte=0"`
 		Price int 	`json:"price" binding:"required,gte=0"`
+		//CategoryID int `json: "category_id" binding:"required,default=1"`
 	}
 	if err := c.ShouldBindJSON(&input); err != nil || strings.TrimSpace(input.Name) == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Nama product wajib diisi, maksimal 100 karakter"})
@@ -33,6 +34,7 @@ func (h *Handler) Create(c *gin.Context) {
 		input.Name,
 		input.Stock,
 		input.Price,
+		//input.CategoryID,
 		user,
 	)  
 	if err != nil {
