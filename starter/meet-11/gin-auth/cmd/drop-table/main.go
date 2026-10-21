@@ -12,9 +12,37 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func run(confirm bool) error {
+func run(args ...interface{}) error {
+	tableName := "categories"
+	confirm := false
+
+	switch len(args) {
+	case 1:
+		switch v := args[0].(type) {
+		case bool:
+			confirm = v
+		case string:
+			tableName = v
+		default:
+			return errors.New("argumen run tidak valid")
+		}
+	case 2:
+		name, ok := args[0].(string)
+		if !ok {
+			return errors.New("nama tabel harus berupa string")
+		}
+		tableName = name
+		flagConfirm, ok := args[1].(bool)
+		if !ok {
+			return errors.New("konfirmasi harus berupa bool")
+		}
+		confirm = flagConfirm
+	default:
+		return errors.New("run membutuhkan 1 atau 2 argumen")
+	}
+
 	if !confirm {
-		return errors.New("penghapusan dibatalkan; gunakan -confirm untuk menghapus tabel categories beserta seluruh datanya")
+		return errors.New("penghapusan dibatalkan; gunakan -confirm untuk menghapus tabel " + tableName + " beserta seluruh datanya")
 	}
 	if err := godotenv.Load(); err != nil && !errors.Is(err, os.ErrNotExist) {
 		return fmt.Errorf("load .env: %w", err)
@@ -30,17 +58,21 @@ func run(confirm bool) error {
 	defer conn.Close()
 
 	// Driver PostgreSQL GORM memakai CASCADE: dependency seperti foreign key ikut dihapus.
-	if err := db.Migrator().DropTable("categories"); err != nil {
-		return fmt.Errorf("hapus tabel categories gagal: %w", err)
+	if err := db.Migrator().DropTable(tableName); err != nil {
+		return fmt.Errorf("hapus tabel %s gagal: %w", tableName, err)
 	}
-	log.Print("Tabel categories sudah tidak ada")
+	log.Printf("Tabel %s sudah tidak ada", tableName)
 	return nil
 }
 
 func main() {
-	confirm := flag.Bool("confirm", false, "hapus tabel categories beserta seluruh data dan dependency (CASCADE)")
+	tableName := flag.String("table", "", "nama tabel yang akan dihapus")
+	confirm := flag.Bool("confirm", false, "hapus tabel beserta seluruh data dan dependency (CASCADE)")
 	flag.Parse()
-	if err := run(*confirm); err != nil {
+	if *tableName == "" {
+		log.Fatal("nama tabel wajib diisi")
+	}
+	if err := run(*tableName, *confirm); err != nil {
 		log.Fatal(err)
 	}
 }
