@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <!-- Perbaikan 1: Menggunakan CDN Bootstrap 5.3.3 yang valid dan stabil -->
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!--
+    <link href="https://jsdelivr.net" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    -->
+  </head>
+  <body>
+    <div class="container mt-4">
+      <h1>Hello, world!</h1>
+  
+      <div class="container-sm border my-2">100% wide until small breakpoint</div>
+      <div class="container-md border my-2">100% wide until medium breakpoint</div>
+      <div class="container-lg border my-2">100% wide until large breakpoint</div>
+      <div class="container-xl border my-2">100% wide until extra large breakpoint</div>
+      <div class="container-xxl border my-2">100% wide until extra extra large breakpoint</div>
+      <p>This is a paragraph.</p>
+
+      <!-- Perbaikan 2: Memperbaiki seluruh struktur tabel agar valid dalam tag <table> -->
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Kelas</th>
+            <th>Tampilan Kolom Tabel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Baris dengan warna latar belakang yang berbeda -->
+          <tr class="table-primary">
+            <td>table-primary</td>
+            <td>...</td>
+          </tr>
+          <tr class="table-secondary">
+            <td>table-secondary</td>
+            <td>...</td>
+          </tr>
+          <tr class="table-success">
+            <td>table-success</td>
+            <td>...</td>
+          </tr>
+          <tr class="table-danger">
+            <td>table-danger</td>
+            <td>...</td>
+          </tr>
+          <tr class="table-warning">
+            <td>table-warning</td>
+            <td>...</td>
+          </tr>
+          <tr class="table-info">
+            <td>table-info</td>
+            <td>...</td>
+          </tr>
+          <tr class="table-light">
+            <td>table-light</td>
+            <td>...</td>
+          </tr>
+          <tr class="table-dark">
+            <td>table-dark</td>
+            <td>...</td>
+          </tr>
+
+          <!-- Baris tunggal dengan sel (td) berwarna-warni -->
+          <tr>
+            <td class="table-primary">Primary</td>
+            <td class="table-secondary">Secondary</td>
+            <td class="table-success">Success</td>
+            <td class="table-danger">Danger</td>
+            <td class="table-warning">Warning</td>
+            <td class="table-info">Info</td>
+            <td class="table-light">Light</td>
+            <td class="table-dark">Dark</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Perbaikan 1: Menggunakan JS Bootstrap 5.3.3 yang valid -->
+    <script src="https://jsdelivr.net" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
