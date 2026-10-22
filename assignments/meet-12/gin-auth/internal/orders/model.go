@@ -15,6 +15,8 @@ type Order struct {
 	CreatedAt time.Time `json:"created_at"`
 
 	GrandTotal int           `json:"grand_total" gorm:"column:total;not null;default:0"`
+	Tax float64 `json:"tax" gorm:"default:0.11"`
+	TaxAmount  int           `json:"tax_amount" gorm:"default:0"`
 	Details    []OrderDetail `json:"order_details" gorm:"foreignKey:OrderID"`
 }
 

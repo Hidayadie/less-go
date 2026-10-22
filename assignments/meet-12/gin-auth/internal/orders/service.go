@@ -46,6 +46,16 @@ func orderTotal(price, quantity int) (int, error) {
 	return price * quantity, nil
 }
 
+func taxSubtotal(total int, taxed float64) (int, error) {
+	if total < 0 {
+		return 0, ErrInvalidOrder
+	}
+	tax := int(float64(total) * taxed)
+	subtotal := total + tax
+	return subtotal, nil
+}
+
+
 func (s *Service) List(ctx context.Context, userID uint) ([]Order, error) {
 	return s.repo.List(ctx, userID)
 }

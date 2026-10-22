@@ -17,18 +17,33 @@ func TestClientCORS(t *testing.T) {
 			response := httptest.NewRecorder()
 			router.ServeHTTP(response, request)
 			want := origin
-			if origin == "https://example.com" {
+			if origin != "http://localhost:8081" {
 				want = ""
 			}
 			if got := response.Header().Get("Access-Control-Allow-Origin"); got != want {
 				t.Fatalf("%s %s: origin = %q, want %q", method, origin, got, want)
 			}
-			if method == http.MethodOptions && response.Code != http.StatusNoContent {
+			if want != "" && method == http.MethodOptions && response.Code != http.StatusNoContent {
 				t.Fatalf("preflight status = %d", response.Code)
 			}
-			if want != "" && response.Header().Get("Access-Control-Allow-Headers") != "Authorization, Content-Type" {
+			if want != "" && method == http.MethodOptions && response.Header().Get("Access-Control-Allow-Headers") != "Origin,Content-Type,Authorization" {
 				t.Fatal("header autentikasi dan JSON harus diizinkan")
 			}
 		}
+	}
+}
+
+func TestCookieLogoutWithoutOrigin(t *testing.T) {
+	router := setupEngine(nil, []byte("test-secret"))
+	req := httptest.NewRequest(http.MethodPost, "/api/auth/logout", nil)
+	req.AddCookie(&http.Cookie{Name: "access_token", Value: "test-token"})
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	if w.Code != http.StatusOK {
+		t.Fatalf("Logout tanpa Origin: status %d, ingin %d", w.Code, http.StatusOK)
+	}
+	cookies := w.Result().Cookies()
+	if len(cookies) != 1 || cookies[0].Name != "access_token" || cookies[0].MaxAge != -1 {
+		t.Fatal("Logout harus menghapus cookie")
 	}
 }

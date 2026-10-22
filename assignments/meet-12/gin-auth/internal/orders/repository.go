@@ -15,9 +15,15 @@ type Repository struct{ db *gorm.DB }
 func NewRepository(db *gorm.DB) *Repository { return &Repository{db: db} }
 
 func (r *Repository) Create(ctx context.Context, items []ItemInput, userID uint) (Order, error) {
+	
 	var order Order
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		order = Order{UserID: userID}
+		order = Order{
+			UserID: userID,
+			Tax: 0.11,
+		}
+
+		var subtots int
 		for _, input := range items {
 			var item product.Product
 			// Kunci diambil sesuai urutan product_id sampai commit atau rollback.
@@ -31,15 +37,27 @@ func (r *Repository) Create(ctx context.Context, items []ItemInput, userID uint)
 			if err != nil {
 				return err
 			}
-			if order.GrandTotal > math.MaxInt-subtotal {
-				return ErrInvalidOrder
+			if subtots > math.MaxInt-subtotal {
+					return ErrInvalidOrder
 			}
-			order.GrandTotal += subtotal
-			order.Details = append(order.Details, OrderDetail{ProductID: item.ID, Qty: input.Quantity, Price: item.Price})
+			subtots += subtotal
+			//if ordrandTotal += subtotal
+
+			order.Details = append(
+				order.Details, OrderDetail{
+					ProductID: item.ID, 
+					Qty: input.Quantity, 
+					Price: item.Price,
+				})
 			if err := tx.Model(&item).Update("stock", gorm.Expr("stock - ?", input.Quantity)).Error; err != nil {
 				return err
 			}
 		}
+
+		taxAmount := int(float64(subtots) * order.Tax)
+		order.TaxAmount  = taxAmount
+		order.GrandTotal = subtots + taxAmount
+
 		if err := tx.Create(&order).Error; err != nil {
 			return err
 		}

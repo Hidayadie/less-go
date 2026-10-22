@@ -18,6 +18,7 @@ import (
 	"gin-auth/internal/public"
 
 	"github.com/gin-contrib/cors"
+
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"gorm.io/gorm"
@@ -28,12 +29,12 @@ func setupEngine(db *gorm.DB, secret []byte) *gin.Engine {
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:8081"},
-    AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-    AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
-    ExposeHeaders:    []string{"Content-Length"},
-    AllowCredentials: true,
-    MaxAge:           12 * time.Hour,
-  }))
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
 	r.Use(func(c *gin.Context) {
 		c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, 1<<20)

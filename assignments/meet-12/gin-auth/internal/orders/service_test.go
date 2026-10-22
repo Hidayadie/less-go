@@ -92,7 +92,7 @@ func TestOrderTransaction(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if order.GrandTotal != 35000 || len(order.Details) != 2 || order.Details[0].Qty != 2 || order.Details[0].Price != 15000 || order.Details[0].Subtotal != 30000 || order.Details[1].Subtotal != 5000 {
+	if order.Tax != 0.11 || order.TaxAmount != 3850 || order.GrandTotal != 38850 || len(order.Details) != 2 || order.Details[0].Qty != 2 || order.Details[0].Price != 15000 || order.Details[0].Subtotal != 30000 || order.Details[1].Subtotal != 5000 {
 		t.Fatalf("order=%+v", order)
 	}
 	if _, err := s.Create(ctx, []ItemInput{{item.ID, 1}, {second.ID, 4}}, user); !errors.Is(err, ErrInsufficientStock) {
@@ -105,7 +105,7 @@ func TestOrderTransaction(t *testing.T) {
 		t.Fatalf("second stock=%d err=%v", second.Stock, err)
 	}
 	found, err := s.GetByID(ctx, order.ID, user.ID)
-	if err != nil || found == nil || found.GrandTotal != 35000 || len(found.Details) != 2 || found.Details[0].Subtotal != 30000 {
+	if err != nil || found == nil || found.GrandTotal != 38850 || found.TaxAmount != 3850 || len(found.Details) != 2 || found.Details[0].Subtotal != 30000 {
 		t.Fatalf("detail=%+v err=%v", found, err)
 	}
 	// Overflow penjumlahan antar item juga harus rollback pengurangan stok.
