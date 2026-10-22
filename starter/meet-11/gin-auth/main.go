@@ -12,6 +12,7 @@ import (
 	"gin-auth/internal/category"
 	"gin-auth/internal/database"
 	"gin-auth/internal/middleware"
+	"gin-auth/internal/orders"
 	"gin-auth/internal/private"
 	"gin-auth/internal/product"
 	"gin-auth/internal/public"
@@ -41,6 +42,8 @@ func setupEngine(db *gorm.DB, secret []byte) *gin.Engine {
 	productHandler := product.NewHandler(productService)
 
 	private.RegisterRoutes(r, handler.RequireAuth(), productHandler)
+	orderHandler := orders.NewHandler(orders.NewService(orders.NewRepository(db)))
+	orders.RegisterRoutes(r.Group("/api/private", handler.RequireAuth()), orderHandler)
 	return r
 }
 
@@ -69,6 +72,8 @@ func run() error {
 		&auth.User{},
 		&product.Product{},
 		&category.Category{},
+		&orders.Order{},
+		&orders.OrderDetail{},
 	); err != nil {
 		return fmt.Errorf("migrasi tabel users/products gagal: %w", err)
 	}

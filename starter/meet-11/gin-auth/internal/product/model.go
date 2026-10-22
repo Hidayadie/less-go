@@ -16,4 +16,7 @@ type Product struct {
 	CategoryID *uint             `json:"category_id" gorm:"index"`
 	Category   category.Category `json:"category" gorm:"constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
 	CreatedAt  time.Time         `json:"created_at"`
+
+	Stock int `json:"stock" gorm:"not null;default:0"`
+	Price int `json:"price" gorm:"not null;default:0"`
 }
